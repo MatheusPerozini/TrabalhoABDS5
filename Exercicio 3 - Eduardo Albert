@@ -1,0 +1,33 @@
+-- O desempenho dos médicos é auferido pela quantidade de atendimento que fazem por período. 
+-- Assim, desenvolva uma função que informadas as datas inicial e final dos atendimentos, retorne o nome do médico e a quantidade de atendimento que realizou no período.
+-- Retorne tudo isso em forma de registro (returns setof record). 
+-- Caso o período não retorne nenhuma consulta, deve ser gerado um erro com RAISE e abortar a função. 
+-- Exemplo: se você colocou as datas 01/01/2003 a 31/12/2006, vai retornar Paulo 1; Marcos 1.
+-- (deverá ser criado um arquivo e postado no Github)
+
+
+CREATE OR REPLACE FUNCTION desempenho_medico(data_inicial date, data_final date) 
+RETURNS 
+setof record
+AS
+$$
+DECLARE
+	atendimentos record;
+BEGIN	
+	for atendimentos in
+		SELECT M.NOME, COUNT(*) AS qtd
+		FROM MEDICO M
+		LEFT JOIN ATENDE AT 
+			ON AT.ID_MEDICO = M.ID_MEDICO
+		WHERE AT.DATA BETWEEN data_inicial AND data_final
+		GROUP BY M.NOME
+	loop
+		return next atendimentos;
+	end loop;
+	RETURN;
+END;
+$$
+LANGUAGE plpgsql;
+
+SELECT * FROM desempenho_medico('2001-01-01', '2010-01-01') as (nome varchar, qtd bigint);
+
