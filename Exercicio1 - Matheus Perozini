@@ -1,0 +1,66 @@
+CREATE USER usuario WITH PASSWORD 'postdba';
+CREATE DATABASE trabalho encoding "utf-8";
+grant all privileges on database trabalho to usuario;
+psql -h localhost -U usuario -d trabalho
+
+create sequence sid_paciente;
+create sequence sid_medico;
+create sequence sid_atende;
+create sequence sid_cirurgia;
+
+CREATE TABLE paciente (
+	id_paciente integer,
+	codigo varchar(11),
+	nome varchar(50),
+	idade integer,
+	CONSTRAINT pk_paciente PRIMARY KEY (id_paciente)
+);
+
+CREATE TABLE medico (
+	id_medico integer,
+	crm varchar(25),
+	nome varchar(50),
+	especialidade varchar(30),
+	CONSTRAINT pk_medico PRIMARY KEY (id_medico)
+);
+
+CREATE TABLE atende (
+	id_atende integer,
+	id_paciente integer,
+	id_medico integer,
+	data Date,
+	CONSTRAINT pk_atende PRIMARY KEY (id_atende),
+	CONSTRAINT fk_paciente_atende FOREIGN KEY (id_paciente) REFERENCES paciente,
+	CONSTRAINT fk_medico_atende FOREIGN KEY (id_medico) REFERENCES medico
+);
+
+CREATE TABLE cirurgia (
+	id_cirurgia integer,
+	codigo varchar(11),
+	data date,
+	descricao text,
+	id_paciente integer,
+	CONSTRAINT pk_cirurgia PRIMARY KEY (id_cirurgia),
+	CONSTRAINT fk_paciente_cirurgia FOREIGN KEY (id_paciente) REFERENCES paciente
+);
+
+insert into paciente values (nextval('sid_paciente'), '145','João', 12),
+(nextval('sid_paciente'), '146','Maria', 38),
+(nextval('sid_paciente'), '147','Antonio', 29),
+(nextval('sid_paciente'), '148','Pedro', 21);
+
+insert into medico values (nextval('sid_medico'), 'm1', 'Marcos', 'Oftalmologista'),
+(nextval('sid_medico'), 'm2', 'Tereza', 'Clínico geral'),
+(nextval('sid_medico'), 'm3', 'Paulo', 'Pediatra'),
+(nextval('sid_medico'), 'm4', 'João', 'Clínico geral');
+
+insert into atende values (nextval('sid_atende'), 1, 2, '09-02-2008'),
+(nextval('sid_atende'), 1, 2, '26-03-2006'),
+(nextval('sid_atende'), 2, 1, '11-09-2003'),
+(nextval('sid_atende'), 3, 3, '13-10-2007'),
+(nextval('sid_atende'), 2, 2, '08-05-2008');
+
+insert into cirurgia values (nextval('sid_cirurgia'), 'c1', '01-01-2023', 1),
+(nextval('sid_cirurgia'), 'c2', '02-01-2023', 2),
+(nextval('sid_cirurgia'), 'c3', '03-01-2023', 3),
+(nextval('sid_cirurgia'), 'c4', '04-01-2023', 2);
