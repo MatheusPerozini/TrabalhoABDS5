@@ -1,6 +1,12 @@
-CREATE USER usuario WITH PASSWORD 'postdba';
-CREATE DATABASE trabalho encoding "utf-8";
-grant all privileges on database trabalho to usuario;
+
+CREATE DATABASE trabalho 
+WITH
+OWNER = postgres
+ENCODING "UTF8"
+CONNECTION LIMIT = -1;
+
+ALTER DATABASE trabalho SET datestyle to 'ISO, DMY';
+
 psql -h localhost -U usuario -d trabalho
 
 create sequence sid_paciente;
